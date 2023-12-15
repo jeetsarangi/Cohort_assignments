@@ -5,6 +5,12 @@
  */
 
 function sleep(milliseconds) {
+
+    return new Promise(function(resolves){
+        let s = new Date();
+        for(let i = new Date();i.getTime()-s.getTime()<=milliseconds;i = new Date());
+        resolves();
+    })
 }
 
 module.exports = sleep;
