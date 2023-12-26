@@ -41,9 +41,74 @@
  */
   const express = require('express');
   const bodyParser = require('body-parser');
+  const todo_class = require('./todo_list');
+  const todo_list = new todo_class();
+  const port = 3000;
+
   
   const app = express();
   
   app.use(bodyParser.json());
+
+
+
+  app.get('/todos/', (req, res) => {
+    res.status(200).json(todo_list.getAll());
+  });
+
+  app.get('/todos/:id', (req, res) => {
+    
+    const id = parseInt(req.params.id);
+    if(todo_list.check_ID(id) == false)
+      res.status(404).send();
+    else
+      res.status(200).json(todo_list.get(id));
+
+  });
+
+
+  app.post('/todos/', (req, res) => {
+
+    const body = req.body;
+    const newtodo = todo_list.add(body);
+    res.status(201).json(newtodo);
+    
+  });
+
+  app.put('/todos/:id', (req, res) => {
+
+    const id = req.params.id;
+    if(todo_list.check_ID(id) == false)
+      res.status(404).send();
+    else{
+      const newTodo = todo_list.update(id,req.body);
+      res.status(200).json(newTodo);
+    }
+
+    
+    
+  });
+
+  app.delete('/todos/:id', (req, res) => {
+
+    const id = req.params.id;
+    if(todo_list.check_ID(id) == false)
+      res.status(404).send();
+    else{
+      todo_list.remove(id);
+      res.status(200).send();
+    }
+
+  });
+
+  app.use((req, res, next) => {
+    res.status(404).send();
+  });
+
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+
+
   
   module.exports = app;
