@@ -41,7 +41,8 @@
  */
   const express = require('express');
   const bodyParser = require('body-parser');
-  const todo_class = require('./todo_list');
+  // const todo_class = require('./todo_list');
+  const todo_class = require('./todo_list_file');
   const todo_list = new todo_class();
   const port = 3000;
 
@@ -52,50 +53,63 @@
 
 
 
-  app.get('/todos/', (req, res) => {
-    res.status(200).json(todo_list.getAll());
+  app.get('/todos/',async (req, res) => {
+    
+    // res.status(200).json(todo_list.getAll());
+
+    const list = await todo_list.getAll();
+    res.status(200).json(list);
+
   });
 
-  app.get('/todos/:id', (req, res) => {
+  app.get('/todos/:id', async (req, res) => {
     
     const id = parseInt(req.params.id);
-    if(todo_list.check_ID(id) == false)
-      res.status(404).send();
+    // if(todo_list.check_ID(id) == false)
+    //   res.status(404).send();
+    // else
+    //   res.status(200).json(todo_list.get(id));
+    const exist = await todo_list.check_ID(id);
+    if(exist)
+      res.status(200).json(await todo_list.get(id));
     else
-      res.status(200).json(todo_list.get(id));
+      res.status(404).send();
 
   });
 
 
-  app.post('/todos/', (req, res) => {
+  app.post('/todos/', async (req, res) => {
 
     const body = req.body;
-    const newtodo = todo_list.add(body);
-    res.status(201).json(newtodo);
-    
+    // const newtodo = todo_list.add(body);
+    // res.status(201).json(newtodo);
+    // console.log(body);
+    const newTodo = await todo_list.add(body);
+    res.status(201).json(newTodo);
   });
 
-  app.put('/todos/:id', (req, res) => {
+  app.put('/todos/:id',async (req, res) => {
 
     const id = req.params.id;
-    if(todo_list.check_ID(id) == false)
+    const check = await todo_list.check_ID(id);
+    // console.log(check);
+    if(check == false)
       res.status(404).send();
     else{
-      const newTodo = todo_list.update(id,req.body);
+      const newTodo = await todo_list.update(id,req.body);
       res.status(200).json(newTodo);
     }
 
     
-    
   });
 
-  app.delete('/todos/:id', (req, res) => {
+  app.delete('/todos/:id',async (req, res) => {
 
     const id = req.params.id;
-    if(todo_list.check_ID(id) == false)
+    if((await todo_list.check_ID(id)) == false)
       res.status(404).send();
     else{
-      todo_list.remove(id);
+      await todo_list.remove(id);
       res.status(200).send();
     }
 
@@ -104,11 +118,5 @@
   app.use((req, res, next) => {
     res.status(404).send();
   });
-
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
-
-
-  
+ 
   module.exports = app;
