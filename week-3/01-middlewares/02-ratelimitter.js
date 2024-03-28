@@ -18,7 +18,7 @@ setInterval(() => {
 
 app.use((req,res,next)=>{
   const curUserId = req.headers.userid;
-  if(curUserId in numberOfRequestsForUser){
+  if(numberOfRequestsForUser[curUserId]){
     numberOfRequestsForUser[curUserId]+=1;
     if(numberOfRequestsForUser[curUserId] > 5)
       {
