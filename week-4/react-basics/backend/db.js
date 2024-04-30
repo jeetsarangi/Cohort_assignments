@@ -9,11 +9,7 @@ const todoSchema = new mongoose.Schema({
     completed: Boolean
 })
 
-// const AdminSchema = new mongoose.Schema({
-//     // Schema definition here
-//     username: String,
-//     password: String
-// });
+
 
 const todoDb = mongoose.model('todos',todoSchema);
 
