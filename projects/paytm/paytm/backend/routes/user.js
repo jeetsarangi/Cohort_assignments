@@ -50,7 +50,9 @@ router.post('/signup', async (req, res)=>{
 
 router.post('/signin',async (req,res)=>{
 
+    console.log("hello")
     const payload = req.body;
+    console.log(payload)
     const parseCheck = loginUser.safeParse(payload);
     if(!parseCheck.success){
         res.status(411).json({
@@ -96,6 +98,7 @@ router.put('/', authmiddleware ,async (req,res)=>{
 
 router.get('/bulk',authmiddleware,async (req,res)=>{
 
+    console.log("here")
     const filter = req.query.filter || "";
     console.log(filter);
     const users = await User.find({
